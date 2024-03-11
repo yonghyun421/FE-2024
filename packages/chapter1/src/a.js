@@ -41,13 +41,34 @@ Worker.prototype.getHealth = function () {
 Worker.prototype.work = function () {
   this._health--;
 };
-JuniorEngineer.prototype = Object.create(Worker.prototype);
+// JuniorEngineer.prototype = Object.create(Worker.prototype);
 
-JuniorEngineer.prototype._super = function (health) {
-  Worker.call(this, health);
-};
+// JuniorEngineer.prototype._super = function (health) {
+//   Worker.call(this, health);
+// };
 
+// JuniorEngineer.prototype.constructor = JuniorEngineer;
+// JuniorEngineer.prototype.getIntelligence = function () {
+//   return this._intelligence;
+// };
+
+// JuniorEngineer.prototype.work = function () {
+//   Worker.prototype.work.call(this);
+//   this._intelligence++;
+// };
+
+// JuniorEngineer.prototype.isBornGenius = function () {
+//   return this._isBornGenius ?? false;
+// };
+
+function JuniorEngineerPrototype() {}
+
+JuniorEngineerPrototype.prototype = Worker.prototype;
+JuniorEngineer.prototype = new JuniorEngineerPrototype();
 JuniorEngineer.prototype.constructor = JuniorEngineer;
+
+JuniorEngineer.prototype._super = Worker;
+
 JuniorEngineer.prototype.getIntelligence = function () {
   return this._intelligence;
 };
@@ -58,7 +79,7 @@ JuniorEngineer.prototype.work = function () {
 };
 
 JuniorEngineer.prototype.isBornGenius = function () {
-  return this._isBornGenius ?? false;
+  return this._isBornGenius || false;
 };
 
 //- 여기에 코드를 작성하세요
