@@ -72,6 +72,7 @@ export function render(parent, newNode, oldNode, index = 0) {
       newNode.children.length,
       oldNode.children.length,
   );
+
   for (let i = 0; i < maxLength; i++) {
     render(
         parent.childNodes[index],
