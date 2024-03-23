@@ -1,9 +1,5 @@
 export function jsx(type, props, ...children) {
-  return {
-    type,
-    props,
-    children
-  }
+  return { type, props, children: children.flat() }
 }
 
 export function createElement(node) {
@@ -13,15 +9,14 @@ export function createElement(node) {
 
   const $el = document.createElement(node.type);
 
-  Object.entries(node.props || {})
-      .filter(([attr, value]) => value)
-      .forEach(([attr, value]) => (
-          $el.setAttribute(attr, value)
-      ));
+  Object.entries(node.props ?? {})
+    .filter(([, value]) => value)
+    .forEach(([attr, value]) => (
+      $el.setAttribute(attr, value)
+    ));
 
-  const children = node.children.map(createElement);
 
-  children.forEach(child => $el.appendChild(child));
+  node.children.map(createElement).forEach(child => $el.appendChild(child));
 
   return $el;
 }
@@ -39,46 +34,36 @@ function updateAttributes(target, newProps, oldProps) {
 }
 
 export function render(parent, newNode, oldNode, index = 0) {
-  if (!newNode && oldNode) {
-    return parent.removeChild(parent.childNode[index]);
-  }
-
-  if (newNode && !oldNode) {
-    return parent.appendChild(createElement(newNode));
-  }
-
+  if (!newNode && oldNode) return parent.removeChild(parent.childNode[index]);
+  if (newNode && !oldNode) return parent.appendChild(createElement(newNode));
   if (typeof newNode === "string" && typeof oldNode === "string") {
     if (newNode === oldNode) return;
     return parent.replaceChild(
-        createElement(newNode),
-        parent.childNodes[index]
+      createElement(newNode),
+      parent.childNodes[index]
     )
   }
-
   if (newNode.type !== oldNode.type) {
     return parent.replaceChild(
-        createElement(newNode),
-        parent.childNodes[index]
+      createElement(newNode),
+      parent.childNodes[index]
     )
   }
 
   updateAttributes(
-      parent.childNodes[index],
-      newNode.props || {},
-      oldNode.props || {}
+    parent.childNodes[index],
+    newNode.props || {},
+    oldNode.props || {},
   );
 
-  const maxLength = Math.max(
-      newNode.children.length,
-      oldNode.children.length,
-  );
+  const maxLength = Math.max(newNode.children.length, oldNode.children.length);
 
   for (let i = 0; i < maxLength; i++) {
     render(
-        parent.childNodes[index],
-        newNode.children[i],
-        oldNode.children[i],
-        i
+      parent.childNodes[index],
+      newNode.children[i],
+      oldNode.children[i],
+      i
     )
   }
 }
